@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 
-export const RowItemView = ({product,price,quantity}) => {
+export const RowItemView = ({id ,product,price,quantity,handlerDeleteItem}) => {
 
     return (
         <>
@@ -8,6 +8,7 @@ export const RowItemView = ({product,price,quantity}) => {
                 <td>{product}</td>
                 <td>{price}</td>
                 <td>{quantity}</td>
+                <td><button className="btn btn-danger" onClick={() => handlerDeleteItem(id)}>Eliminar</button></td>
             </tr>
         </>
     )

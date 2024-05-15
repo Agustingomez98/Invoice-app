@@ -1,61 +1,78 @@
-import { getInvoice } from "./services/getInvoice"
+import { getInvoice, calculateTotal } from "./services/getInvoice"
 import { InvoiceDetails } from "./components/InvoiceDetails";
 import { ClientDetails } from "./components/ClientDetails";
 import { CompanyDetails } from "./components/CompanyDetails";
 import { ListItemView } from "./components/ListItemsView";
 import { TotalDetails } from "./components/TotalDetails";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FormItemsView } from "./components/FormItemsView";
+
+const invoiceInitial = {
+    id: 0,
+    name: "",
+    client: {
+        name: "",
+        lastName: "",
+        address: {
+            country: "",
+            city: "",
+            street: "",
+            number: 0,
+        }
+    },
+    company: {
+        name: "",
+        fiscalNummber: 0,
+    },
+    items: []
+}
 
 export const InvoiceApp = () => {
 
-    const { id, name, client, company, items: intialItem, total } = getInvoice();
+    const [activeForm,setActiveForm] =  useState(false);
 
-    const [formItemState, setFormItemState] = useState({
-        product: '',
-        price: '',
-        quantity: '',
-    });
-    //Deestructuracion de las variables
-    const { product, price, quantity } = formItemState;
-
-    const [items, setItems] = useState(intialItem);
+    const [total, setTotal] = useState(0);
 
     const [counter, setCounter] = useState(4);
 
-    const onInputChange = ({ target: { name, value } }) => {
-        console.log(value);
-        setFormItemState({
-            ...formItemState,
-            [name]: value,
-        });
-    }
+    const [invoice, setInvoice] = useState(invoiceInitial);
+
+    //Inicializamos los items
+    const [items, setItems] = useState([]);
+
+    //Deestructuracion de la factura
+    const { id, name, client, company } = invoice;
+
+    useEffect(() => {
+        const data = getInvoice();
+        setInvoice(data); //Pasamos el estado de la factura al estado
+        setItems(data.items); //Pasamos los items al estado
+    }, [])//Podriamos pasar dependencias u objeos que activen al modificarse el estado. Los corchetes son para que se ejecute una sola vez al crar el componente
 
 
-    const onInvoiceItemSubmit = (event) => {
-        event.preventDefault();
+    //Manejo del total de los prouctos
+    useEffect(() => {
+        setTotal(calculateTotal(items));
+    }, [items])
 
-        if (product.trim().length <= 1) return;
-        if (price.trim().length <= 1 || isNaN(price.trim())) {
-            alert("El precio ingresado no es valido");
-            return;
-        };
-        if (quantity.trim().length < 1 || isNaN(quantity.trim())) {
-            alert("La cantidad no es valida");
-            return
-        };
+    const handlerAddItems = ({ product, price, quantity }) => {
 
         setItems([...items, {
-            id: 4, product: product.trim(), price: +price.trim(), quantity:
-                +quantity.trim()
+            id: counter,
+            product: product.trim(),
+            price: price.trim(),
+            quantity: parseInt(quantity.trim(), 10),
         }])
 
-        setFormItemState({
-            product: '',
-            price: '',
-            quantity: '',
-        })
+        setCounter(counter +1)  
+    }
 
-        setCounter(counter + 1);
+    const handlerDeleteItem = (id) => {
+        setItems(items.filter(item => item.id !== id))
+    }
+
+    const onActiveForm = () => {
+        setActiveForm(!activeForm);
     }
 
     return (
@@ -78,16 +95,12 @@ export const InvoiceApp = () => {
                                 <CompanyDetails title={'Datos de la compania'} company={company} />
                             </div>
                         </div>
-                        <ListItemView title='Productos de la factura' items={items} />
+                        <ListItemView title='Productos de la factura' items={items} handlerDeleteItem = {id => handlerDeleteItem (id)} /> 
                         <TotalDetails total={total} />
+                        <button className="btn btn-secondary"
+                        onClick={onActiveForm}>{!activeForm ? 'Agegar Item' : 'Ocultar Form'}</button>
+                        {!activeForm? '':<FormItemsView handler={(newItem) => handlerAddItems(newItem) } />}
 
-                        <form className="w-50" onSubmit={onInvoiceItemSubmit}>
-                            <input type="text" name="product" value={product} placeholder="Producto" className="form-control m-3" onChange={onInputChange} />
-                            <input type="text" name="price" value={price} placeholder="Precio" className="form-control m-3" onChange={onInputChange} />
-                            <input type="text" name="quantity" value={quantity} placeholder="Cantidad" className="form-control m-3" onChange={onInputChange} />
-
-                            <button type="submit" className="btn btn-primary m-3">Nuevo Item</button>
-                        </form>
                     </div>
                 </div>
             </div>

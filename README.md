@@ -1,8 +1,18 @@
-# React + Vite
+# Invoice-App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<p align="center" >
+     <img width="600" heigth="600" src="src\assets\invoice-img.png">
+</p>
 
-Currently, two official plugins are available:
+### Informacion del proyecto:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+<p align="left"> Aplicacion de factura donde simulamos una base de datos con informacion agregada. Cuenta con la funciones de agregar productos a la factura, eliminarlos y mostrar el total del gasto. Este proyecto se realizo en el curso de React y Spring brindado por Andrés Guzmán en la plataforma Udemy<p>
+
+#### Contenidos trabajados: 
+
+<ul>
+     <li>JavaScript Moderno ECMAScript</li>
+     <li>Introduccion a React</li>
+     <li>Componentes  </li>
+     <li>Hooks de React (useState y useEfect)</li>
+</ul>
